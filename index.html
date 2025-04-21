@@ -19,7 +19,7 @@
       color: white;
       overflow: hidden;
       position: relative;
-      cursor: pointer; /* تغيير المؤشر ليصبح على شكل يد عند التمرير فوق القمر */
+      cursor: pointer;
     }
 
     .moon {
@@ -62,15 +62,23 @@
 
     .message {
       font-size: 22px;
-      margin-top: 30px; /* جعل المسافة بين القمر والرسالة أكبر */
+      margin-top: 30px;
       opacity: 0.95;
     }
 
     /* إخفاء مشغل الصوت */
     audio {
-      display: none; /* إخفاء مشغل الصوت */
+      display: none; 
     }
 
+    /* تنسيق العد التنازلي */
+    .countdown {
+      font-size: 24px;
+      color: #ff5500;
+      margin-top: 50px;
+      font-weight: bold;
+    }
+    
   </style>
 </head>
 <body>
@@ -78,6 +86,7 @@
   <div>
     <div class="moon" onclick="playAudio()"></div> <!-- عند الضغط على القمر، سيبدأ تشغيل الصوت -->
     <div class="message">ليالي الهنوف✨</div>
+    <div class="countdown" id="countdown"></div> <!-- عداد تنازلي -->
   </div>
 
   <!-- مشغل الصوت -->
@@ -92,6 +101,47 @@
       var audio = document.getElementById('audioPlayer');
       audio.play(); // تشغيل الصوت
     }
+
+    // حساب اليوم الهجري باستخدام API
+    async function getHijriDate() {
+      const response = await fetch("http://api.aladhan.com/v1/gToH?date=" + new Date().toLocaleDateString());
+      const data = await response.json();
+      const hijriDate = data.data.hijri.day; // اليوم الهجري
+      return hijriDate;
+    }
+
+    // دالة للتحقق إذا كان اليوم ضمن الأيام التي تعمل فيها الصفحة
+    async function checkHijriDate() {
+      const hijriDate = await getHijriDate();
+      const validDays = [13, 14, 15, 16, 17]; // الأيام التي يعمل فيها الموقع
+      if (validDays.includes(parseInt(hijriDate))) {
+        document.querySelector('.moon').style.display = 'block'; // إظهار القمر
+        document.querySelector('.message').style.display = 'block'; // إظهار الرسالة
+        startCountdown(); // بدء العد التنازلي
+      } else {
+        document.querySelector('.countdown').textContent = 'الموقع غير متاح اليوم.';
+        document.querySelector('.moon').style.display = 'none'; // إخفاء القمر إذا لم يكن اليوم مناسب
+      }
+    }
+
+    // عداد تنازلي
+    function startCountdown() {
+      const countdown = document.getElementById('countdown');
+      let endDate = new Date();
+      endDate.setHours(0, 0, 0, 0);
+      endDate.setDate(endDate.getDate() + 3); // تحديد 3 أيام من اليوم
+      setInterval(() => {
+        const now = new Date();
+        const timeLeft = endDate - now;
+        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        countdown.textContent = `الوقت المتبقي: ${days} يوم، ${hours} ساعة، ${minutes} دقيقة`;
+      }, 60000); // تحديث كل دقيقة
+    }
+
+    // بدء التحقق من التاريخ
+    checkHijriDate();
   </script>
 
 </body>
