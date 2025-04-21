@@ -19,7 +19,7 @@
       color: white;
       overflow: hidden;
       position: relative;
-      cursor: pointer;
+      cursor: pointer; /* تغيير المؤشر ليصبح على شكل يد عند التمرير فوق القمر */
     }
 
     .moon {
@@ -62,24 +62,13 @@
 
     .message {
       font-size: 22px;
-      margin-top: 30px;
+      margin-top: 30px; /* جعل المسافة بين القمر والرسالة أكبر */
       opacity: 0.95;
     }
 
     /* إخفاء مشغل الصوت */
     audio {
-      display: none; 
-    }
-
-    /* تنسيق العد التنازلي */
-    .countdown {
-      font-size: 24px;
-      color: #ff5500;
-      margin-top: 50px;
-      font-weight: bold;
-      position: absolute;
-      top: 80%;
-      transform: translateY(-50%);
+      display: none; /* إخفاء مشغل الصوت */
     }
 
   </style>
@@ -89,7 +78,6 @@
   <div>
     <div class="moon" onclick="playAudio()"></div> <!-- عند الضغط على القمر، سيبدأ تشغيل الصوت -->
     <div class="message">ليالي الهنوف✨</div>
-    <div class="countdown" id="countdown"></div> <!-- عداد تنازلي -->
   </div>
 
   <!-- مشغل الصوت -->
@@ -104,46 +92,6 @@
       var audio = document.getElementById('audioPlayer');
       audio.play(); // تشغيل الصوت
     }
-
-    // حساب اليوم الميلادي مع الأيام الهجرية المتوقعة
-    function getHijriDate() {
-      // استخدام التاريخ الميلادي الحالي لحساب الأيام الهجرية
-      let today = new Date();
-      let dayOfMonth = today.getDate(); // الحصول على اليوم الميلادي الحالي
-
-      // حساب الأيام الهجرية المقابلة (بالتقريب)
-      const hijriDays = [13, 14, 15, 16, 17]; // الأيام الهجرية المتوقعة
-      if (hijriDays.includes(dayOfMonth)) {
-        document.querySelector('.moon').style.display = 'block'; // إظهار القمر
-        document.querySelector('.message').style.display = 'block'; // إظهار الرسالة
-        startCountdown(); // بدء العد التنازلي
-      } else {
-        document.querySelector('.countdown').textContent = 'الموقع غير متاح اليوم.';
-        document.querySelector('.moon').style.display = 'none'; // إخفاء القمر إذا لم يكن اليوم مناسب
-      }
-    }
-
-    // عداد تنازلي متحرك
-    function startCountdown() {
-      const countdown = document.getElementById('countdown');
-      let endDate = new Date();
-      endDate.setHours(0, 0, 0, 0);
-      endDate.setDate(endDate.getDate() + 3); // تحديد 3 أيام من اليوم
-      setInterval(() => {
-        const now = new Date();
-        const timeLeft = endDate - now;
-        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60));
-        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-        countdown.textContent = `الوقت المتبقي: ${days} يوم، ${hours} ساعة، ${minutes} دقيقة`;
-        if (timeLeft <= 0) {
-          countdown.textContent = 'لقد بدأ اليوم القمري!';
-        }
-      }, 1000); // التحديث كل ثانية
-    }
-
-    // بدء التحقق من التاريخ
-    getHijriDate();
   </script>
 
 </body>
