@@ -1,132 +1,197 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>ليالي الهنوف</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>ليالي الهنوف</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
 
-body {
-margin: 0;
-padding: 0;
-font-family: 'Amiri', serif;
-height: 100vh;
-overflow: hidden;
-background: #000;
-touch-action: manipulation;
-display: flex;
-justify-content: center;
-align-items: center;
--webkit-tap-highlight-color: transparent;
-}
+    /* Base styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Amiri', serif;
+      height: 100vh;
+      overflow: hidden;
+      background: #000;
+      position: relative;
+      touch-action: manipulation;
+    }
 
-.container {
-position: relative;
-text-align: center;
-}
+    /* Splash screen */
+    #splash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .spinner {
+      border: 6px solid rgba(255,255,255,0.2);
+      border-top: 6px solid #fff;
+      border-radius: 50%;
+      width: 50px; height: 50px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .loading-text {
+      margin-top: 10px;
+      color: #fff;
+      font-size: 18px;
+    }
 
-.moon {
-width: 180px;
-height: 180px;
-background: radial-gradient(circle at 40% 40%, #ffffff, #c7c7c7, #5a5a5a);
-border-radius: 50%;
-box-shadow: 0 0 80px rgba(255, 255, 255, 0.4);
-animation: pulse 3s ease-in-out infinite;
-cursor: pointer;
-transition: transform 0.2s;
-}
+    /* Container and moon */
+    .container {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 1;
+    }
+    .moon {
+      width: 20vmin; height: 20vmin;
+      background: url('images/moon-texture.jpg') no-repeat center/cover;
+      border-radius: 50%;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .moon:active { transform: scale(0.95); }
 
-.moon:active {
-transform: scale(0.95);
-}
+    /* Title and instruction */
+    .title {
+      margin-top: 1vmin;
+      font-size: 4vmin;
+      color: #fff;
+      text-shadow: 0 0 8px rgba(255,255,255,0.7);
+    }
+    .instruction {
+      margin-top: 0.5vmin;
+      font-size: 3vmin;
+      color: rgba(255,255,255,0.8);
+      text-shadow: 0 0 6px rgba(255,255,255,0.5);
+      animation: fadeInOut 2s infinite;
+    }
+    @keyframes fadeInOut {
+      0%,100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
 
-.instruction {
-position: absolute;
-bottom: -40px;
-width: 100%;
-font-size: 20px;
-color: rgba(255, 255, 255, 0.8);
-text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-opacity: 0.9;
-animation: fadeInOut 2s infinite;
-}
+    /* Stars */
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 2s infinite alternate, move 30s linear infinite;
+    }
+    @keyframes twinkle {
+      0% { opacity: 0.2; }
+      100% { opacity: 1; }
+    }
+    @keyframes move {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-100vw, 100vh); }
+    }
 
-@keyframes pulse {
-0%, 100% { transform: scale(1); }
-50% { transform: scale(1.05); }
-}
-
-@keyframes fadeInOut {
-0%, 100% { opacity: 0.5; }
-50% { opacity: 1; }
-}
-</style>
+    /* Audio player hidden */
+    audio { display: none; }
+  </style>
 </head>
 <body>
-<div class="container">
-<div class="moon" id="moon"></div>
-<div class="instruction">المس القمر</div>
-</div>
+  <!-- Splash Screen -->
+  <div id="splash">
+    <div class="spinner"></div>
+    <div class="loading-text">جارٍ التحميل...</div>
+  </div>
 
-<audio id="player" hidden></audio>
+  <!-- Main Content -->
+  <div class="container">
+    <div class="moon" id="moon"></div>
+    <div class="title">ليالي الهنوف</div>
+    <div class="instruction">المس القمر</div>
+  </div>
 
-<script>
-// تهيئة المشغل الصوتي
-const songs = [
-'songs/song1.mp3',
-'songs/song2.mp3',
-'songs/song3.mp3'
-];
+  <audio id="player"></audio>
 
-let currentSong = 0;
-const player = document.getElementById('player');
-const moon = document.getElementById('moon');
+  <script>
+    // Song list
+    const songs = [
+      'songs/song1.mp3',
+      'songs/song2.mp3',
+      'songs/song3.mp3'
+    ];
 
-// دعم الأجهزة التي تعمل باللمس
-function handleStart() {
-if(player.paused) {
-playRandomSong();
-moon.style.animationPlayState = 'running';
-} else {
-player.pause();
-moon.style.animationPlayState = 'paused';
-}
-}
+    // Preload all audio files
+    const preloadAudios = songs.map(src => {
+      const a = new Audio();
+      a.src = src;
+      return new Promise(res => a.addEventListener('canplaythrough', res, { once: true }));
+    });
 
-// تجنب الزووم على iOS
-document.documentElement.addEventListener('touchstart', function(e) {
-if(e.touches.length > 1) e.preventDefault();
-}, { passive: false });
+    // When all are loaded, hide splash
+    Promise.all(preloadAudios).then(() => {
+      document.getElementById('splash').style.display = 'none';
+      // After loading, initialize stars
+      createStars();
+    });
 
-// أحداث اللمس والنقر
-moon.addEventListener('touchstart', function(e) {
-e.preventDefault();
-handleStart();
-});
+    // Play/pause handler
+    const player = document.getElementById('player');
+    const moon = document.getElementById('moon');
+    let currentSong = 0;
 
-moon.addEventListener('click', handleStart);
+    function handleStart() {
+      if (player.paused) {
+        playRandomSong();
+      } else {
+        player.pause();
+      }
+    }
 
-function playRandomSong() {
-currentSong = Math.floor(Math.random() * songs.length);
-player.src = songs[currentSong];
-// إصلاح مشكلة التشغيل على iOS
-player.play().catch(error => {
-console.log('يجب تفعيل التشغيل باللمس الأول');
-});
-}
+    moon.addEventListener('click', handleStart);
+    moon.addEventListener('touchstart', e => { e.preventDefault(); handleStart(); });
 
-// التبديل التلقائي عند انتهاء الأغنية
-player.addEventListener('ended', () => {
-currentSong = (currentSong + 1) % songs.length;
-player.src = songs[currentSong];
-player.play();
-});
+    function playRandomSong() {
+      currentSong = Math.floor(Math.random() * songs.length);
+      player.src = songs[currentSong];
+      player.play().catch(() => {
+        console.log('Playback requires user interaction');
+      });
+    }
 
-// إخفاء التعليمات بعد التشغيل
-player.addEventListener('play', () => {
-document.querySelector('.instruction').style.display = 'none';
-});
-</script>
+    // Auto-play next song
+    player.addEventListener('ended', () => {
+      currentSong = (currentSong + 1) % songs.length;
+      player.src = songs[currentSong];
+      player.play();
+    });
+
+    // Fade out instruction on play
+    player.addEventListener('play', () => {
+      document.querySelector('.instruction').style.display = 'none';
+    });
+
+    // Create twinkling moving stars
+    function createStars() {
+      const count = 100;
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        const size = Math.random() * 2 + 1;
+        star.style.width = star.style.height = size + 'px';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 5 + 's';
+        star.style.animationDuration = (2 + Math.random() * 3) + 's, 30s linear infinite';
+        document.body.appendChild(star);
+      }
+    }
+  </script>
 </body>
 </html>
