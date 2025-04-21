@@ -1,197 +1,223 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ليالي الهنوف</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ليالي الهنوف</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
 
-    /* Base styles */
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Amiri', serif;
-      height: 100vh;
-      overflow: hidden;
-      background: #000;
-      position: relative;
-      touch-action: manipulation;
-    }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    /* Splash screen */
-    #splash {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: #000;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .spinner {
-      border: 6px solid rgba(255,255,255,0.2);
-      border-top: 6px solid #fff;
-      border-radius: 50%;
-      width: 50px; height: 50px;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
-    .loading-text {
-      margin-top: 10px;
-      color: #fff;
-      font-size: 18px;
-    }
+body {
+  font-family: 'Amiri', serif;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
 
-    /* Container and moon */
-    .container {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      z-index: 1;
-    }
-    .moon {
-      width: 20vmin; height: 20vmin;
-      background: url('images/moon-texture.jpg') no-repeat center/cover;
-      border-radius: 50%;
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .moon:active { transform: scale(0.95); }
+/* شاشة الانتظار */
+#splash {
+  position: fixed;
+  z-index: 9999;
+  background: #000;
+  color: white;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
 
-    /* Title and instruction */
-    .title {
-      margin-top: 1vmin;
-      font-size: 4vmin;
-      color: #fff;
-      text-shadow: 0 0 8px rgba(255,255,255,0.7);
-    }
-    .instruction {
-      margin-top: 0.5vmin;
-      font-size: 3vmin;
-      color: rgba(255,255,255,0.8);
-      text-shadow: 0 0 6px rgba(255,255,255,0.5);
-      animation: fadeInOut 2s infinite;
-    }
-    @keyframes fadeInOut {
-      0%,100% { opacity: 0.5; }
-      50% { opacity: 1; }
-    }
+.loader {
+  border: 4px solid #fff3;
+  border-top: 4px solid #fff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 20px;
+  animation: spin 1s linear infinite;
+}
 
-    /* Stars */
-    .star {
-      position: absolute;
-      background: #fff;
-      border-radius: 50%;
-      opacity: 0.8;
-      animation: twinkle 2s infinite alternate, move 30s linear infinite;
-    }
-    @keyframes twinkle {
-      0% { opacity: 0.2; }
-      100% { opacity: 1; }
-    }
-    @keyframes move {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(-100vw, 100vh); }
-    }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
-    /* Audio player hidden */
-    audio { display: none; }
-  </style>
+/* القمر */
+.container {
+  position: relative;
+  text-align: center;
+}
+
+.moon {
+  width: 40vmin;
+  height: 40vmin;
+  background: url('images/moon-texture.jpg') center/cover no-repeat;
+  border-radius: 50%;
+  box-shadow: 0 0 80px rgba(255, 255, 255, 0.4);
+  animation: pulse 3s ease-in-out infinite;
+  cursor: pointer;
+  transition: transform 0.2s;
+  position: relative;
+  z-index: 1;
+}
+
+.moon:active {
+  transform: scale(0.95);
+}
+
+.title {
+  margin-top: 15px;
+  font-size: 3vmin;
+  color: white;
+  text-shadow: 0 0 10px rgba(255,255,255,0.7);
+}
+
+.instruction {
+  font-size: 2.5vmin;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  animation: fadeInOut 2s infinite;
+}
+
+/* نجوم */
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: twinkle 2s infinite alternate, move 30s linear infinite;
+}
+
+@keyframes twinkle {
+  from { opacity: 0.3; }
+  to { opacity: 1; }
+}
+
+@keyframes move {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(10px, 10px) rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+</style>
 </head>
 <body>
-  <!-- Splash Screen -->
-  <div id="splash">
-    <div class="spinner"></div>
-    <div class="loading-text">جارٍ التحميل...</div>
-  </div>
 
-  <!-- Main Content -->
-  <div class="container">
-    <div class="moon" id="moon"></div>
-    <div class="title">ليالي الهنوف</div>
-    <div class="instruction">المس القمر</div>
-  </div>
+<div id="splash">
+  <div class="loader"></div>
+  <div>جارٍ التحميل…</div>
+</div>
 
-  <audio id="player"></audio>
+<div class="stars"></div>
 
-  <script>
-    // Song list
-    const songs = [
-      'songs/song1.mp3',
-      'songs/song2.mp3',
-      'songs/song3.mp3'
-    ];
+<div class="container">
+  <div class="moon" id="moon"></div>
+  <div class="title">ليالي الهنوف</div>
+  <div class="instruction">المس القمر</div>
+</div>
 
-    // Preload all audio files
-    const preloadAudios = songs.map(src => {
-      const a = new Audio();
-      a.src = src;
-      return new Promise(res => a.addEventListener('canplaythrough', res, { once: true }));
-    });
+<audio id="player" hidden></audio>
 
-    // When all are loaded, hide splash
-    Promise.all(preloadAudios).then(() => {
-      document.getElementById('splash').style.display = 'none';
-      // After loading, initialize stars
-      createStars();
-    });
+<script>
+const songs = [
+  'songs/song1.mp3',
+  'songs/song2.mp3',
+  'songs/song3.mp3'
+];
 
-    // Play/pause handler
-    const player = document.getElementById('player');
-    const moon = document.getElementById('moon');
-    let currentSong = 0;
+let loaded = 0;
+const player = document.getElementById('player');
+const moon = document.getElementById('moon');
+const splash = document.getElementById('splash');
 
-    function handleStart() {
-      if (player.paused) {
-        playRandomSong();
-      } else {
-        player.pause();
-      }
-    }
+// تحميل الأغاني بشكل مسبق
+const buffers = [];
+songs.forEach((song, index) => {
+  const audio = new Audio();
+  audio.src = song;
+  audio.preload = 'auto';
+  audio.addEventListener('canplaythrough', () => {
+    loaded++;
+    if (loaded === songs.length) finishLoading();
+  });
+});
 
-    moon.addEventListener('click', handleStart);
-    moon.addEventListener('touchstart', e => { e.preventDefault(); handleStart(); });
+// المؤقت لتجاوز شاشة الانتظار بعد 5 ثواني لو الأغاني ما خلصت
+setTimeout(finishLoading, 5000);
 
-    function playRandomSong() {
-      currentSong = Math.floor(Math.random() * songs.length);
-      player.src = songs[currentSong];
-      player.play().catch(() => {
-        console.log('Playback requires user interaction');
-      });
-    }
+function finishLoading() {
+  splash.style.display = 'none';
+}
 
-    // Auto-play next song
-    player.addEventListener('ended', () => {
-      currentSong = (currentSong + 1) % songs.length;
-      player.src = songs[currentSong];
-      player.play();
-    });
+// النجوم المتحركة
+function createStars(count = 100) {
+  const starsContainer = document.querySelector('.stars');
+  for (let i = 0; i < count; i++) {
+    const star = document.createElement('div');
+    star.classList.add('star');
+    const size = Math.random() * 2 + 1;
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+    star.style.top = Math.random() * 100 + 'vh';
+    star.style.left = Math.random() * 100 + 'vw';
+    star.style.animationDuration = (Math.random() * 2 + 1) + 's';
+    starsContainer.appendChild(star);
+  }
+}
+createStars();
 
-    // Fade out instruction on play
-    player.addEventListener('play', () => {
-      document.querySelector('.instruction').style.display = 'none';
-    });
+function handleStart() {
+  if(player.paused) {
+    playRandomSong();
+    moon.style.animationPlayState = 'running';
+  } else {
+    player.pause();
+    moon.style.animationPlayState = 'paused';
+  }
+}
 
-    // Create twinkling moving stars
-    function createStars() {
-      const count = 100;
-      for (let i = 0; i < count; i++) {
-        const star = document.createElement('div');
-        star.classList.add('star');
-        const size = Math.random() * 2 + 1;
-        star.style.width = star.style.height = size + 'px';
-        star.style.top = Math.random() * 100 + '%';
-        star.style.left = Math.random() * 100 + '%';
-        star.style.animationDelay = Math.random() * 5 + 's';
-        star.style.animationDuration = (2 + Math.random() * 3) + 's, 30s linear infinite';
-        document.body.appendChild(star);
-      }
-    }
-  </script>
+moon.addEventListener('touchstart', e => {
+  e.preventDefault();
+  handleStart();
+});
+moon.addEventListener('click', handleStart);
+
+function playRandomSong() {
+  const currentSong = Math.floor(Math.random() * songs.length);
+  player.src = songs[currentSong];
+  player.play().catch(console.error);
+}
+
+player.addEventListener('ended', () => {
+  const nextSong = Math.floor(Math.random() * songs.length);
+  player.src = songs[nextSong];
+  player.play();
+});
+
+player.addEventListener('play', () => {
+  document.querySelector('.instruction').style.display = 'none';
+});
+</script>
 </body>
 </html>
