@@ -32,6 +32,7 @@
       position: relative;
       overflow: hidden;
       filter: blur(1px);
+      z-index: 1;  /* يجعله فوق الودجت */
     }
 
     /* تأثيرات النبض للقمر */
@@ -63,17 +64,19 @@
       font-size: 22px;
       margin-top: 10px;
       opacity: 0.95;
+      position: absolute;
+      top: 40px;
+      z-index: 2; /* ظهور النص فوق القمر */
     }
 
-    /* إخفاء مشغل SoundCloud */
+    /* تصميم مشغل SoundCloud بشكل صغير */
     iframe {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 0; /* تقليص العرض إلى 0 */
-      height: 0; /* تقليص الارتفاع إلى 0 */
-      visibility: hidden; /* إخفاء المشغل */
-      z-index: -1; /* ضمان أن المشغل في الخلف */
+      bottom: 20px;
+      width: 300px;  /* تحديد العرض ليكون صغير */
+      height: 50px;  /* تحديد الارتفاع ليكون صغير */
+      z-index: 0; /* وضع الودجت في أسفل الواجهة */
+      border: none;
     }
 
   </style>
@@ -86,25 +89,7 @@
   </div>
 
   <!-- مشغل SoundCloud -->
-  <iframe id="soundcloud-widget" width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/2009287482%3Fsecret_token%3Ds-FItGenaSADy&amp;color=%23ff5500&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;show_teaser=true&amp;visual=true">
-  </iframe>
-
-  <script src="https://w.soundcloud.com/player/api.js"></script>
-  <script>
-    // التأكد من أن المشغل جاهز للعمل
-    var iframe = document.getElementById('soundcloud-widget');
-    var widget = SC.Widget(iframe);
-
-    // عندما يصبح المشغل جاهزًا
-    widget.bind(SC.Widget.Events.READY, function() {
-      widget.play();  // يبدأ تشغيل الصوت
-    });
-
-    // إذا تم مغادرة الصفحة أو إغلاقها، إيقاف الصوت مؤقتًا
-    window.addEventListener('beforeunload', function() {
-      widget.pause();  // إيقاف الصوت مؤقتًا
-    });
-  </script>
+  <iframe id="soundcloud-widget" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/2009287482%3Fsecret_token%3Ds-FItGenaSADy&amp;color=%23ff5500&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;show_teaser=true&amp;visual=true" allow="autoplay"></iframe>
 
 </body>
 </html>
