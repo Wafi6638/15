@@ -1,110 +1,74 @@
-<html lang="ar"><head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ليالي الهنوف</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ليالي الهنوف</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
 
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Amiri', serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      height: 100vh;
-      background: linear-gradient(to bottom, #000000, #1a1a1a);
-      color: white;
-      overflow: hidden;
-      position: relative;
-    }
+        .moon {
+            width: 200px;
+            height: 200px;
+            background-color: #f1f1f1;
+            border-radius: 50%;
+            margin: 100px auto;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            animation: pulse 2s infinite;
+        }
 
-    .moon {
-      width: 180px;
-      height: 180px;
-      background: radial-gradient(circle at 40% 40%, #ffffff, #c7c7c7, #5a5a5a);
-      border-radius: 50%;
-      box-shadow: 0 0 80px rgba(255, 255, 255, 0.4), 0 0 120px rgba(255, 255, 255, 0.3);
-      animation: pulse 5s ease-in-out infinite, moon-light 4s ease-in-out infinite;
-      margin-bottom: 20px;
-      position: relative;
-      overflow: hidden;
-      filter: blur(1px);
-    }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
 
-    /* تأثيرات النبض للقمر */
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-        box-shadow: 0 0 60px rgba(255, 255, 255, 0.2), 0 0 120px rgba(255, 255, 255, 0.2);
-      }
-      50% {
-        transform: scale(1.08);
-        box-shadow: 0 0 120px rgba(255, 255, 255, 0.5), 0 0 160px rgba(255, 255, 255, 0.5);
-      }
-    }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #ff5500;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-    /* تأثيرات الإضاءة على القمر */
-    @keyframes moon-light {
-      0% {
-        box-shadow: 0 0 80px rgba(255, 255, 255, 0.3), 0 0 120px rgba(255, 255, 255, 0.2);
-      }
-      50% {
-        box-shadow: 0 0 120px rgba(255, 255, 255, 0.4), 0 0 180px rgba(255, 255, 255, 0.3);
-      }
-      100% {
-        box-shadow: 0 0 80px rgba(255, 255, 255, 0.3), 0 0 120px rgba(255, 255, 255, 0.2);
-      }
-    }
-
-    .message {
-      font-size: 22px;
-      margin-top: 10px;
-      opacity: 0.95;
-    }
-
-    /* إخفاء مشغل SoundCloud */
-    iframe {
-      position: absolute; /* وضع الـ iframe في الخلفية */
-      top: 0;
-      left: 0;
-      width: 0; /* تقليص العرض إلى 0 */
-      height: 0; /* تقليص الارتفاع إلى 0 */
-      visibility: hidden; /* إخفاء المشغل */
-      z-index: -1; /* ضمان أن المشغل في الخلف */
-    }
-
-  </style>
+        button:hover {
+            background-color: #ff3333;
+        }
+    </style>
 </head>
 <body>
-
-  <div>
     <div class="moon"></div>
-    <div class="message">ليالي الهنوف✨</div>
-  </div>
+    <h1>ليالي الهنوف</h1>
+    <p>اضغط على الزر لتشغيل الموسيقى</p>
+    <button id="playButton">تشغيل الموسيقى</button>
 
-  <!-- مشغل SoundCloud -->
-  <iframe id="soundcloud-widget" width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/2009287482%3Fsecret_token%3Ds-FItGenaSADy&amp;color=%23ff5500&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;show_teaser=true&amp;visual=true">
-  </iframe>
+    <script>
+        document.getElementById('playButton').addEventListener('click', function() {
+            var iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/2009287482%3Fsecret_token%3Ds-FItGenaSADy&color=%23ff5500&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true";
+            document.body.appendChild(iframe);
 
-  <script src="https://w.soundcloud.com/player/api.js"></script>
-  <script>
-    // التأكد من أن المشغل جاهز للعمل
-    var iframe = document.getElementById('soundcloud-widget');
-    var widget = SC.Widget(iframe);
-
-    // عندما يصبح المشغل جاهزًا
-    widget.bind(SC.Widget.Events.READY, function() {
-      widget.play();  // يبدأ تشغيل الصوت
-    });
-
-    // إذا تم مغادرة الصفحة أو إغلاقها، إيقاف الصوت مؤقتًا
-    window.addEventListener('beforeunload', function() {
-      widget.pause();  // إيقاف الصوت مؤقتًا
-    });
-  </script>
-
-
-
-</body></html>
+            // لإظهار رسالة عند الضغط
+            alert("تم تشغيل الموسيقى!");
+        });
+    </script>
+</body>
+</html>
