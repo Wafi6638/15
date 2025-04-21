@@ -1,65 +1,250 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ليالي الهنوف</title>
-  <style>
-    body {
-      font-family: 'Amiri', serif;
-      background-color: #000;
-      color: #fff;
-      text-align: center;
-      padding-top: 50px;
-    }
-    #countdown {
-      font-size: 24px;
-      font-weight: bold;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ليالي الهنوف</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Amiri', serif;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+
+/* شاشة الانتظار */
+#splash {
+  position: fixed;
+  z-index: 9999;
+  background: #000;
+  color: white;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  text-align: center;
+}
+
+.loader {
+  border: 4px solid #fff3;
+  border-top: 4px solid #fff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+#countdown {
+  margin-top: 15px;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+/* القمر */
+.container {
+  position: relative;
+  text-align: center;
+}
+
+.moon {
+  width: 40vmin;
+  height: 40vmin;
+  background: radial-gradient(circle at 30% 30%, #fff, #ddd, #999);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 20px rgba(255,255,255,0.3),
+    0 0 80px rgba(255, 255, 255, 0.4);
+  animation: pulse 3s ease-in-out infinite;
+  cursor: pointer;
+  transition: transform 0.2s;
+  position: relative;
+  z-index: 1;
+}
+
+/* تأثير لمس القمر */
+@keyframes moonTouch {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.moon.touch-animate {
+  animation: moonTouch 2s ease;
+}
+
+.title {
+  margin-top: 15px;
+  font-size: 3.5vmin;
+  color: white;
+  text-shadow: 0 0 10px rgba(255,255,255,0.7);
+}
+
+.instruction {
+  font-size: 2.5vmin;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  animation: fadeInOut 2s infinite;
+}
+
+/* نجوم */
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: twinkle 2s infinite alternate, move 30s linear infinite;
+}
+
+@keyframes twinkle {
+  from { opacity: 0.3; }
+  to { opacity: 1; }
+}
+
+@keyframes move {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(10px, 10px) rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+</style>
 </head>
 <body>
+
+<div id="splash">
+  <div class="loader"></div>
+  <div>الموقع سيفتح قريبًا...</div>
   <div id="countdown"></div>
+</div>
 
-  <script>
-    // الحصول على التاريخ الميلادي الحالي
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1; // الأشهر تبدأ من 0
-    const day = today.getDate();
+<div class="stars"></div>
 
-    // استدعاء API للحصول على التاريخ الهجري
-    fetch(`https://api.aladhan.com/v1/gToH?date=${day}-${month}-${year}`)
-      .then(response => response.json())
-      .then(data => {
-        const hijriDay = parseInt(data.data.hijri.day, 10);
-        
-        // تحقق مما إذا كان اليوم هجريًا 13-17
-        if (hijriDay >= 13 && hijriDay <= 17) {
-          document.getElementById('countdown').style.display = 'none';
-        } else {
-          // عداد تنازلي
-          const targetDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1); // المستقبل (اليوم التالي)
-          const countdownInterval = setInterval(function() {
-            const now = new Date();
-            const remainingTime = targetDate - now;
+<div class="container">
+  <div class="moon" id="moon"></div>
+  <div class="title">ليالي الهنوف</div>
+  <div class="instruction">المس القمر</div>
+</div>
 
-            if (remainingTime <= 0) {
-              clearInterval(countdownInterval);
-              document.getElementById('countdown').style.display = 'none'; // إخفاء العداد عندما يكتمل
-            } else {
-              const hours = Math.floor(remainingTime / 1000 / 60 / 60);
-              const minutes = Math.floor((remainingTime / 1000 / 60) % 60);
-              const seconds = Math.floor((remainingTime / 1000) % 60);
-              document.getElementById('countdown').textContent = `${hours} : ${minutes} : ${seconds}`;
-            }
-          }, 1000);
-        }
-      })
-      .catch(error => {
-        console.error('حدث خطأ أثناء جلب التاريخ الهجري:', error);
-        document.getElementById('countdown').style.display = 'none'; // إخفاء العداد إذا حدث خطأ
-      });
-  </script>
+<audio id="player" hidden></audio>
+
+<script>
+const songs = [
+  'songs/song1.mp3',
+  'songs/song2.mp3',
+  'songs/song3.mp3'
+];
+
+const player = document.getElementById('player');
+const moon = document.getElementById('moon');
+const splash = document.getElementById('splash');
+const instruction = document.querySelector('.instruction');
+
+let currentSong = 0;
+let isFirstClick = true;
+
+// 🎯 تاريخ الفتح: 22 أبريل 2025 الساعة 00:00
+const launchDate = new Date("2025-04-22T00:00:00").getTime();
+const countdown = document.getElementById("countdown");
+
+// ⏳ عداد تنازلي
+function updateCountdown() {
+  const now = new Date().getTime();
+  const distance = launchDate - now;
+
+  if (distance <= 0) {
+    splash.style.display = 'none';
+    clearInterval(timer);
+  } else {
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    countdown.innerHTML = `الموقع سيفتح بعد:<br> ${days} يوم ${hours} ساعة ${minutes} دقيقة ${seconds} ثانية`;
+  }
+}
+
+const timer = setInterval(updateCountdown, 1000);
+updateCountdown(); // تشغيل أولي
+
+// ⭐ توليد النجوم
+function createStars(count = 100) {
+  const starsContainer = document.querySelector('.stars');
+  for (let i = 0; i < count; i++) {
+    const star = document.createElement('div');
+    star.classList.add('star');
+    const size = Math.random() * 2 + 1;
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+    star.style.top = Math.random() * 100 + 'vh';
+    star.style.left = Math.random() * 100 + 'vw';
+    star.style.animationDuration = (Math.random() * 2 + 1) + 's';
+    starsContainer.appendChild(star);
+  }
+}
+createStars();
+
+// 🎵 تشغيل أول أغنية وعدم الإيقاف
+function handleStart() {
+  if (!isFirstClick) return;
+  isFirstClick = false;
+
+  moon.classList.add('touch-animate');
+  setTimeout(() => {
+    moon.classList.remove('touch-animate');
+  }, 2000);
+
+  playSong(currentSong);
+}
+
+moon.addEventListener('touchstart', e => {
+  e.preventDefault();
+  handleStart();
+});
+moon.addEventListener('click', handleStart);
+
+function playSong(index) {
+  player.src = songs[index];
+  player.play().catch(console.error);
+}
+
+player.addEventListener('ended', () => {
+  currentSong = (currentSong + 1) % songs.length;
+  playSong(currentSong);
+});
+
+player.addEventListener('play', () => {
+  instruction.style.display = 'none';
+});
+</script>
 </body>
 </html>
