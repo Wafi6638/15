@@ -77,8 +77,11 @@
       color: #ff5500;
       margin-top: 50px;
       font-weight: bold;
+      position: absolute;
+      top: 80%;
+      transform: translateY(-50%);
     }
-    
+
   </style>
 </head>
 <body>
@@ -120,7 +123,7 @@
       }
     }
 
-    // عداد تنازلي
+    // عداد تنازلي متحرك
     function startCountdown() {
       const countdown = document.getElementById('countdown');
       let endDate = new Date();
@@ -133,7 +136,10 @@
         const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60));
         const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
         countdown.textContent = `الوقت المتبقي: ${days} يوم، ${hours} ساعة، ${minutes} دقيقة`;
-      }, 60000); // تحديث كل دقيقة
+        if (timeLeft <= 0) {
+          countdown.textContent = 'لقد بدأ اليوم القمري!';
+        }
+      }, 1000); // التحديث كل ثانية
     }
 
     // بدء التحقق من التاريخ
