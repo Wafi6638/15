@@ -39,6 +39,7 @@ body {
   justify-content: center;
   align-items: center;
   font-size: 24px;
+  text-align: center;
 }
 
 .loader {
@@ -53,6 +54,12 @@ body {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+#countdown {
+  margin-top: 15px;
+  font-size: 18px;
+  line-height: 1.8;
 }
 
 /* القمر */
@@ -135,7 +142,8 @@ body {
 
 <div id="splash">
   <div class="loader"></div>
-  <div>جارٍ التحميل…</div>
+  <div>الموقع سيفتح قريبًا...</div>
+  <div id="countdown"></div>
 </div>
 
 <div class="stars"></div>
@@ -150,7 +158,9 @@ body {
 
 <script>
 const songs = [
-  'songs/song2.mp3'
+  'songs/song1.mp3',
+  'songs/song2.mp3',
+  'songs/song3.mp3'
 ];
 
 const player = document.getElementById('player');
@@ -161,12 +171,32 @@ const instruction = document.querySelector('.instruction');
 let currentSong = 0;
 let isFirstClick = true;
 
-// شاشة الانتظار 5 ثواني
-setTimeout(() => {
-  splash.style.display = 'none';
-}, 5000);
+// 🎯 تاريخ الفتح: 22 أبريل 2025 الساعة 00:00
+const launchDate = new Date("2025-04-22T00:00:00").getTime();
+const countdown = document.getElementById("countdown");
 
-// توليد النجوم
+// ⏳ عداد تنازلي
+function updateCountdown() {
+  const now = new Date().getTime();
+  const distance = launchDate - now;
+
+  if (distance <= 0) {
+    splash.style.display = 'none';
+    clearInterval(timer);
+  } else {
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    countdown.innerHTML = `الموقع سيفتح بعد:<br> ${days} يوم ${hours} ساعة ${minutes} دقيقة ${seconds} ثانية`;
+  }
+}
+
+const timer = setInterval(updateCountdown, 1000);
+updateCountdown(); // تشغيل أولي
+
+// ⭐ توليد النجوم
 function createStars(count = 100) {
   const starsContainer = document.querySelector('.stars');
   for (let i = 0; i < count; i++) {
@@ -183,12 +213,11 @@ function createStars(count = 100) {
 }
 createStars();
 
-// تشغيل أول أغنية ومنع أي ضغطات بعدها
+// 🎵 تشغيل أول أغنية وعدم الإيقاف
 function handleStart() {
   if (!isFirstClick) return;
   isFirstClick = false;
 
-  // تأثير التفاعل
   moon.classList.add('touch-animate');
   setTimeout(() => {
     moon.classList.remove('touch-animate');
@@ -208,13 +237,11 @@ function playSong(index) {
   player.play().catch(console.error);
 }
 
-// الانتقال التلقائي للأغنية التالية
 player.addEventListener('ended', () => {
   currentSong = (currentSong + 1) % songs.length;
   playSong(currentSong);
 });
 
-// إخفاء التعليمات عند بداية التشغيل
 player.addEventListener('play', () => {
   instruction.style.display = 'none';
 });
