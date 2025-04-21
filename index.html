@@ -19,6 +19,7 @@
       color: white;
       overflow: hidden;
       position: relative;
+      cursor: pointer; /* تغيير المؤشر ليصبح على شكل يد عند التمرير فوق القمر */
     }
 
     .moon {
@@ -61,48 +62,37 @@
 
     .message {
       font-size: 22px;
-      margin-top: 10px;
+      margin-top: 30px; /* جعل المسافة بين القمر والرسالة أكبر */
       opacity: 0.95;
     }
 
     /* إخفاء مشغل الصوت */
-    iframe {
-      position: absolute; /* وضع الـ iframe في الخلفية */
-      top: 0;
-      left: 0;
-      width: 0; /* تقليص العرض إلى 0 */
-      height: 0; /* تقليص الارتفاع إلى 0 */
-      visibility: hidden; /* إخفاء المشغل */
-      z-index: -1; /* ضمان أن المشغل في الخلف */
+    audio {
+      display: none; /* إخفاء مشغل الصوت */
     }
 
-    /* مشغل الصوت */
-    audio {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80%;
-      background: rgba(0, 0, 0, 0.5);
-      border-radius: 10px;
-      padding: 5px;
-      color: white;
-      display: block;
-    }
   </style>
 </head>
 <body>
 
   <div>
-    <div class="moon"></div>
+    <div class="moon" onclick="playAudio()"></div> <!-- عند الضغط على القمر، سيبدأ تشغيل الصوت -->
     <div class="message">ليالي الهنوف✨</div>
   </div>
 
   <!-- مشغل الصوت -->
-  <audio controls id="audioPlayer" autoplay>
+  <audio id="audioPlayer" autoplay loop>
     <source id="audioSource" src="https://res.cloudinary.com/dxpevf39z/video/upload/v1745254693/%D9%85%D8%AD%D9%85%D8%AF_%D8%B9%D8%A8%D8%AF%D9%87_-_%D8%A7%D9%84%D9%85%D8%B9%D8%A7%D8%B2%D9%8A%D9%85_en0tpv.mp3" type="audio/mp3">
     متصفحك لا يدعم مشغل الصوت.
   </audio>
+
+  <script>
+    // دالة لتشغيل الصوت عند الضغط على القمر
+    function playAudio() {
+      var audio = document.getElementById('audioPlayer');
+      audio.play(); // تشغيل الصوت
+    }
+  </script>
 
 </body>
 </html>
