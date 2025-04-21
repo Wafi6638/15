@@ -1,128 +1,132 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ليالي الهنوف</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ليالي الهنوف</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Amiri', serif;
-            height: 100vh;
-            overflow: hidden;
-            background: #000;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+body {
+margin: 0;
+padding: 0;
+font-family: 'Amiri', serif;
+height: 100vh;
+overflow: hidden;
+background: #000;
+touch-action: manipulation;
+display: flex;
+justify-content: center;
+align-items: center;
+-webkit-tap-highlight-color: transparent;
+}
 
-        .container {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-        }
+.container {
+position: relative;
+text-align: center;
+}
 
-        .moon {
-            width: 180px;
-            height: 180px;
-            background: radial-gradient(circle at 40% 40%, #ffffff, #c7c7c7, #5a5a5a);
-            border-radius: 50%;
-            box-shadow: 0 0 80px rgba(255, 255, 255, 0.4);
-            animation: pulse 3s ease-in-out infinite;
-            position: relative;
-        }
+.moon {
+width: 180px;
+height: 180px;
+background: radial-gradient(circle at 40% 40%, #ffffff, #c7c7c7, #5a5a5a);
+border-radius: 50%;
+box-shadow: 0 0 80px rgba(255, 255, 255, 0.4);
+animation: pulse 3s ease-in-out infinite;
+cursor: pointer;
+transition: transform 0.2s;
+}
 
-        .stars {
-            position: fixed;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-        }
+.moon:active {
+transform: scale(0.95);
+}
 
-        .star {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            animation: twinkle var(--duration) ease-in-out infinite;
-        }
+.instruction {
+position: absolute;
+bottom: -40px;
+width: 100%;
+font-size: 20px;
+color: rgba(255, 255, 255, 0.8);
+text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+opacity: 0.9;
+animation: fadeInOut 2s infinite;
+}
 
-        .title {
-            font-size: 24px;
-            color: #fff;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-            margin-top: 30px;
-            opacity: 0.9;
-        }
+@keyframes pulse {
+0%, 100% { transform: scale(1); }
+50% { transform: scale(1.05); }
+}
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-    </style>
+@keyframes fadeInOut {
+0%, 100% { opacity: 0.5; }
+50% { opacity: 1; }
+}
+</style>
 </head>
 <body>
-    <div class="stars" id="stars"></div>
-    
-    <div class="container">
-        <div class="moon"></div>
-        <div class="title">ليالي الهنوف</div>
-    </div>
+<div class="container">
+<div class="moon" id="moon"></div>
+<div class="instruction">المس القمر</div>
+</div>
 
-    <audio id="player"></audio>
+<audio id="player" hidden></audio>
 
-    <script>
-        // إنشاء النجوم العشوائية
-        function createStars() {
-            const starsContainer = document.getElementById('stars');
-            for(let i = 0; i < 100; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.left = `${Math.random() * 100}%`;
-                star.style.top = `${Math.random() * 100}%`;
-                star.style.width = `${Math.random() * 3}px`;
-                star.style.height = star.style.width;
-                star.style.setProperty('--duration', `${2 + Math.random() * 3}s`);
-                starsContainer.appendChild(star);
-            }
-        }
+<script>
+// تهيئة المشغل الصوتي
+const songs = [
+'songs/song1.mp3',
+'songs/song2.mp3',
+'songs/song3.mp3'
+];
 
-        // إعداد المشغل الصوتي
-        const songs = [
-            'songs/song1.mp3',
-            'songs/song2.mp3',
-            'songs/song3.mp3'
-        ];
+let currentSong = 0;
+const player = document.getElementById('player');
+const moon = document.getElementById('moon');
 
-        let currentSong = 0;
-        const player = document.getElementById('player');
+// دعم الأجهزة التي تعمل باللمس
+function handleStart() {
+if(player.paused) {
+playRandomSong();
+moon.style.animationPlayState = 'running';
+} else {
+player.pause();
+moon.style.animationPlayState = 'paused';
+}
+}
 
-        function playRandomSong() {
-            currentSong = Math.floor(Math.random() * songs.length);
-            player.src = songs[currentSong];
-            player.play();
-        }
+// تجنب الزووم على iOS
+document.documentElement.addEventListener('touchstart', function(e) {
+if(e.touches.length > 1) e.preventDefault();
+}, { passive: false });
 
-        // بدء التشغيل عند النقر الأول
-        document.body.addEventListener('click', () => {
-            if(player.paused) {
-                playRandomSong();
-            }
-        }, { once: true });
+// أحداث اللمس والنقر
+moon.addEventListener('touchstart', function(e) {
+e.preventDefault();
+handleStart();
+});
 
-        // التالي التلقائي عند انتهاء الأغنية
-        player.addEventListener('ended', playRandomSong);
+moon.addEventListener('click', handleStart);
 
-        // تهيئة النجوم
-        createStars();
-    </script>
+function playRandomSong() {
+currentSong = Math.floor(Math.random() * songs.length);
+player.src = songs[currentSong];
+// إصلاح مشكلة التشغيل على iOS
+player.play().catch(error => {
+console.log('يجب تفعيل التشغيل باللمس الأول');
+});
+}
+
+// التبديل التلقائي عند انتهاء الأغنية
+player.addEventListener('ended', () => {
+currentSong = (currentSong + 1) % songs.length;
+player.src = songs[currentSong];
+player.play();
+});
+
+// إخفاء التعليمات بعد التشغيل
+player.addEventListener('play', () => {
+document.querySelector('.instruction').style.display = 'none';
+});
+</script>
 </body>
 </html>
