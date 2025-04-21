@@ -1,156 +1,103 @@
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ليالي الهنوف</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ليالي الهنوف</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
 
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Amiri', serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      min-height: 100vh;
-      background: linear-gradient(to bottom, #000000, #1a1a1a);
-      color: white;
-      position: relative;
-      cursor: pointer;
-    }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Amiri', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #000000, #1a1a1a);
+            color: white;
+            cursor: pointer;
+        }
 
-    .container {
-      position: relative;
-      z-index: 1;
-    }
+        .container {
+            position: relative;
+            z-index: 1;
+        }
 
-    .moon {
-      width: 180px;
-      height: 180px;
-      background: radial-gradient(circle at 40% 40%, #ffffff, #c7c7c7, #5a5a5a);
-      border-radius: 50%;
-      box-shadow: 0 0 80px rgba(255, 255, 255, 0.4);
-      animation: pulse 5s ease-in-out infinite;
-      margin: 20px auto;
-      position: relative;
-      transition: transform 0.3s ease;
-    }
+        .moon {
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle at 40% 40%, #ffffff, #c7c7c7, #5a5a5a);
+            border-radius: 50%;
+            box-shadow: 0 0 80px rgba(255, 255, 255, 0.4);
+            animation: pulse 5s ease-in-out infinite;
+            margin: 20px auto;
+            transition: transform 0.3s ease;
+        }
 
-    .moon:hover {
-      transform: scale(1.05);
-    }
+        .moon:hover {
+            transform: scale(1.05);
+        }
 
-    .moon.active {
-      box-shadow: 0 0 120px rgba(255, 255, 255, 0.6);
-    }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
 
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.08); }
-    }
+        .message {
+            font-size: 24px;
+            margin: 30px 0;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
 
-    .message {
-      font-size: 24px;
-      margin: 30px 0;
-      opacity: 0.95;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    }
-
-    .audio-status {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 14px;
-      opacity: 0.7;
-    }
-
-    .stars {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    .star {
-      position: absolute;
-      background: white;
-      border-radius: 50%;
-      animation: twinkle var(--duration) ease-in-out infinite;
-    }
-
-    @keyframes twinkle {
-      0%, 100% { opacity: 0; }
-      50% { opacity: 1; }
-    }
-  </style>
+        .soundcloud-player {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="moon" onclick="toggleAudio()"></div>
-    <div class="message">ليالي الهنوف ✨</div>
-    <div class="audio-status" id="status">انقر على القمر للتشغيل</div>
-  </div>
+    <div class="container">
+        <div class="moon" id="moon"></div>
+        <div class="message">ليالي الهنوف ✨</div>
+    </div>
 
-  <div class="stars" id="stars"></div>
+    <!-- مشغل SoundCloud المخفي -->
+    <div id="soundcloud-player" class="soundcloud-player"></div>
 
-  <audio id="audioPlayer">
-    <source src="https://cdn.example.com/audio.mp3" type="audio/mpeg">
-    <source src="https://cdn.example.com/audio.ogg" type="audio/ogg">
-    المتصفح لا يدعم تشغيل الصوتيات.
-  </audio>
+    <script src="https://w.soundcloud.com/player/api.js"></script>
 
-  <script>
-    // إنشاء النجوم العشوائية
-    function createStars() {
-      const starsContainer = document.getElementById('stars');
-      for (let i = 0; i < 100; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
-        star.style.left = `${Math.random() * 100}%`;
-        star.style.top = `${Math.random() * 100}%`;
-        star.style.width = `${Math.random() * 3}px`;
-        star.style.height = star.style.width;
-        star.style.setProperty('--duration', `${2 + Math.random() * 3}s`);
-        starsContainer.appendChild(star);
-      }
-    }
+    <script>
+        // تهيئة المشغل مع رابطك الخاص
+        const initPlayer = () => {
+            const iframe = document.createElement('iframe');
+            iframe.id = 'soundcloud-iframe';
+            iframe.width = '0';
+            iframe.height = '0';
+            iframe.allow = 'autoplay';
+            iframe.src = `https://w.soundcloud.com/player/?url=https://soundcloud.com/discover/sets/your-playlist:xTguBU33r8EDJ2EJ9&auto_play=true&hide_related=true&show_comments=false&buying=false&sharing=false&download=false`;
+            document.body.appendChild(iframe);
 
-    // التحكم في الصوت
-    const audio = document.getElementById('audioPlayer');
-    const moon = document.querySelector('.moon');
-    const status = document.getElementById('status');
+            const widget = SC.Widget('soundcloud-iframe');
+            
+            widget.bind(SC.Widget.Events.READY, () => {
+                widget.play();
+                document.getElementById('moon').style.animationPlayState = 'running';
+            });
+        };
 
-    async function toggleAudio() {
-      try {
-        if (audio.paused) {
-          await audio.play();
-          moon.classList.add('active');
-          status.textContent = '♪ التشغيل الآن...';
-        } else {
-          audio.pause();
-          moon.classList.remove('active');
-          status.textContent = 'انقر على القمر للتشغيل';
-        }
-      } catch (error) {
-        status.textContent = 'حدث خطأ في تشغيل الصوت';
-        console.error('خطأ الصوت:', error);
-      }
-    }
+        // بدء التشغيل عند النقر لأول مرة
+        document.body.addEventListener('click', function initialPlay() {
+            initPlayer();
+            document.body.removeEventListener('click', initialPlay);
+        });
 
-    // تهيئة النجوم عند التحميل
-    window.addEventListener('load', () => {
-      createStars();
-      audio.load();
-    });
-
-    // إضافة تأثير عند التمرير
-    window.addEventListener('scroll', () => {
-      const scrolled = window.pageYOffset;
-      moon.style.transform = `scale(${1 + scrolled * 0.0005})`;
-    });
-  </script>
+        // تحريك القمر عند التشغيل
+        const moon = document.getElementById('moon');
+        moon.addEventListener('click', () => {
+            moon.style.animationPlayState = moon.style.animationPlayState === 'paused' ? 'running' : 'paused';
+        });
+    </script>
 </body>
 </html>
