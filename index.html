@@ -76,6 +76,17 @@ body {
   z-index: 1;
 }
 
+/* تأثير لمس القمر */
+@keyframes moonTouch {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.moon.touch-animate {
+  animation: moonTouch 2s ease;
+}
+
 .title {
   margin-top: 15px;
   font-size: 3.5vmin;
@@ -139,9 +150,7 @@ body {
 
 <script>
 const songs = [
-  'songs/song1.mp3',
-  'songs/song2.mp3',
-  'songs/song3.mp3'
+  'songs/song2.mp3'
 ];
 
 const player = document.getElementById('player');
@@ -178,6 +187,13 @@ createStars();
 function handleStart() {
   if (!isFirstClick) return;
   isFirstClick = false;
+
+  // تأثير التفاعل
+  moon.classList.add('touch-animate');
+  setTimeout(() => {
+    moon.classList.remove('touch-animate');
+  }, 2000);
+
   playSong(currentSong);
 }
 
