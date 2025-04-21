@@ -12,12 +12,6 @@
       text-align: center;
       padding-top: 50px;
     }
-    #content {
-      display: none;
-    }
-    #waiting {
-      display: none;
-    }
     #countdown {
       font-size: 24px;
       font-weight: bold;
@@ -25,15 +19,7 @@
   </style>
 </head>
 <body>
-  <div id="waiting">
-    <p>الموقع سيفتح قريبًا...</p>
-    <p id="countdown"></p>
-  </div>
-  <div id="content">
-    <!-- محتوى الموقع هنا -->
-    <h1>مرحبًا بك في ليالي الهنوف</h1>
-    <!-- يمكنك إضافة باقي العناصر هنا -->
-  </div>
+  <div id="countdown"></div>
 
   <script>
     // الحصول على التاريخ الميلادي الحالي
@@ -47,16 +33,11 @@
       .then(response => response.json())
       .then(data => {
         const hijriDay = parseInt(data.data.hijri.day, 10);
-        const hijriMonth = data.data.hijri.month.en;
         
         // تحقق مما إذا كان اليوم هجريًا 13-17
         if (hijriDay >= 13 && hijriDay <= 17) {
-          document.getElementById('content').style.display = 'block';
-          document.getElementById('waiting').style.display = 'none';
+          document.getElementById('countdown').style.display = 'none';
         } else {
-          document.getElementById('waiting').style.display = 'block';
-          document.getElementById('content').style.display = 'none';
-          
           // عداد تنازلي
           const targetDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1); // المستقبل (اليوم التالي)
           const countdownInterval = setInterval(function() {
@@ -65,20 +46,19 @@
 
             if (remainingTime <= 0) {
               clearInterval(countdownInterval);
-              document.getElementById('waiting').style.display = 'none';
-              document.getElementById('content').style.display = 'block';
+              document.getElementById('countdown').style.display = 'none'; // إخفاء العداد عندما يكتمل
             } else {
               const hours = Math.floor(remainingTime / 1000 / 60 / 60);
               const minutes = Math.floor((remainingTime / 1000 / 60) % 60);
               const seconds = Math.floor((remainingTime / 1000) % 60);
-              document.getElementById('countdown').textContent = `سيفتح الموقع في: ${hours} ساعة و ${minutes} دقيقة و ${seconds} ثانية`;
+              document.getElementById('countdown').textContent = `${hours} : ${minutes} : ${seconds}`;
             }
           }, 1000);
         }
       })
       .catch(error => {
         console.error('حدث خطأ أثناء جلب التاريخ الهجري:', error);
-        document.getElementById('waiting').style.display = 'block';
+        document.getElementById('countdown').style.display = 'none'; // إخفاء العداد إذا حدث خطأ
       });
   </script>
 </body>
