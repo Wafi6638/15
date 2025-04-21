@@ -32,7 +32,6 @@
       position: relative;
       overflow: hidden;
       filter: blur(1px);
-      z-index: 1;  /* يجعله فوق الودجت */
     }
 
     /* تأثيرات النبض للقمر */
@@ -64,21 +63,32 @@
       font-size: 22px;
       margin-top: 10px;
       opacity: 0.95;
-      position: absolute;
-      top: 40px;
-      z-index: 2; /* ظهور النص فوق القمر */
     }
 
-    /* تصميم مشغل SoundCloud بشكل صغير */
+    /* إخفاء مشغل الصوت */
     iframe {
+      position: absolute; /* وضع الـ iframe في الخلفية */
+      top: 0;
+      left: 0;
+      width: 0; /* تقليص العرض إلى 0 */
+      height: 0; /* تقليص الارتفاع إلى 0 */
+      visibility: hidden; /* إخفاء المشغل */
+      z-index: -1; /* ضمان أن المشغل في الخلف */
+    }
+
+    /* مشغل الصوت */
+    audio {
       position: absolute;
       bottom: 20px;
-      width: 300px;  /* تحديد العرض ليكون صغير */
-      height: 50px;  /* تحديد الارتفاع ليكون صغير */
-      z-index: 0; /* وضع الودجت في أسفل الواجهة */
-      border: none;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      padding: 5px;
+      color: white;
+      display: block;
     }
-
   </style>
 </head>
 <body>
@@ -88,8 +98,11 @@
     <div class="message">ليالي الهنوف✨</div>
   </div>
 
-  <!-- مشغل SoundCloud -->
-  <iframe id="soundcloud-widget" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/2009287482%3Fsecret_token%3Ds-FItGenaSADy&amp;color=%23ff5500&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;show_teaser=true&amp;visual=true" allow="autoplay"></iframe>
+  <!-- مشغل الصوت -->
+  <audio controls id="audioPlayer" autoplay>
+    <source id="audioSource" src="https://res.cloudinary.com/dxpevf39z/video/upload/v1745254693/%D9%85%D8%AD%D9%85%D8%AF_%D8%B9%D8%A8%D8%AF%D9%87_-_%D8%A7%D9%84%D9%85%D8%B9%D8%A7%D8%B2%D9%8A%D9%85_en0tpv.mp3" type="audio/mp3">
+    متصفحك لا يدعم مشغل الصوت.
+  </audio>
 
 </body>
 </html>
