@@ -64,9 +64,11 @@ body {
 .moon {
   width: 40vmin;
   height: 40vmin;
-  background: url('images/moon-texture.jpg') center/cover no-repeat;
+  background: radial-gradient(circle at 30% 30%, #fff, #ddd, #999);
   border-radius: 50%;
-  box-shadow: 0 0 80px rgba(255, 255, 255, 0.4);
+  box-shadow:
+    inset 0 0 20px rgba(255,255,255,0.3),
+    0 0 80px rgba(255, 255, 255, 0.4);
   animation: pulse 3s ease-in-out infinite;
   cursor: pointer;
   transition: transform 0.2s;
@@ -74,13 +76,9 @@ body {
   z-index: 1;
 }
 
-.moon:active {
-  transform: scale(0.95);
-}
-
 .title {
   margin-top: 15px;
-  font-size: 3vmin;
+  font-size: 3.5vmin;
   color: white;
   text-shadow: 0 0 10px rgba(255,255,255,0.7);
 }
@@ -146,31 +144,20 @@ const songs = [
   'songs/song3.mp3'
 ];
 
-let loaded = 0;
 const player = document.getElementById('player');
 const moon = document.getElementById('moon');
 const splash = document.getElementById('splash');
+const instruction = document.querySelector('.instruction');
 
-// تحميل الأغاني بشكل مسبق
-const buffers = [];
-songs.forEach((song, index) => {
-  const audio = new Audio();
-  audio.src = song;
-  audio.preload = 'auto';
-  audio.addEventListener('canplaythrough', () => {
-    loaded++;
-    if (loaded === songs.length) finishLoading();
-  });
-});
+let currentSong = 0;
+let isFirstClick = true;
 
-// المؤقت لتجاوز شاشة الانتظار بعد 5 ثواني لو الأغاني ما خلصت
-setTimeout(finishLoading, 5000);
-
-function finishLoading() {
+// شاشة الانتظار 5 ثواني
+setTimeout(() => {
   splash.style.display = 'none';
-}
+}, 5000);
 
-// النجوم المتحركة
+// توليد النجوم
 function createStars(count = 100) {
   const starsContainer = document.querySelector('.stars');
   for (let i = 0; i < count; i++) {
@@ -187,14 +174,11 @@ function createStars(count = 100) {
 }
 createStars();
 
+// تشغيل أول أغنية ومنع أي ضغطات بعدها
 function handleStart() {
-  if(player.paused) {
-    playRandomSong();
-    moon.style.animationPlayState = 'running';
-  } else {
-    player.pause();
-    moon.style.animationPlayState = 'paused';
-  }
+  if (!isFirstClick) return;
+  isFirstClick = false;
+  playSong(currentSong);
 }
 
 moon.addEventListener('touchstart', e => {
@@ -203,20 +187,20 @@ moon.addEventListener('touchstart', e => {
 });
 moon.addEventListener('click', handleStart);
 
-function playRandomSong() {
-  const currentSong = Math.floor(Math.random() * songs.length);
-  player.src = songs[currentSong];
+function playSong(index) {
+  player.src = songs[index];
   player.play().catch(console.error);
 }
 
+// الانتقال التلقائي للأغنية التالية
 player.addEventListener('ended', () => {
-  const nextSong = Math.floor(Math.random() * songs.length);
-  player.src = songs[nextSong];
-  player.play();
+  currentSong = (currentSong + 1) % songs.length;
+  playSong(currentSong);
 });
 
+// إخفاء التعليمات عند بداية التشغيل
 player.addEventListener('play', () => {
-  document.querySelector('.instruction').style.display = 'none';
+  instruction.style.display = 'none';
 });
 </script>
 </body>
