@@ -102,19 +102,15 @@
       audio.play(); // تشغيل الصوت
     }
 
-    // حساب اليوم الهجري باستخدام API
-    async function getHijriDate() {
-      const response = await fetch("http://api.aladhan.com/v1/gToH?date=" + new Date().toLocaleDateString());
-      const data = await response.json();
-      const hijriDate = data.data.hijri.day; // اليوم الهجري
-      return hijriDate;
-    }
+    // حساب اليوم الميلادي مع الأيام الهجرية المتوقعة
+    function getHijriDate() {
+      // استخدام التاريخ الميلادي الحالي لحساب الأيام الهجرية
+      let today = new Date();
+      let dayOfMonth = today.getDate(); // الحصول على اليوم الميلادي الحالي
 
-    // دالة للتحقق إذا كان اليوم ضمن الأيام التي تعمل فيها الصفحة
-    async function checkHijriDate() {
-      const hijriDate = await getHijriDate();
-      const validDays = [13, 14, 15, 16, 17]; // الأيام التي يعمل فيها الموقع
-      if (validDays.includes(parseInt(hijriDate))) {
+      // حساب الأيام الهجرية المقابلة (بالتقريب)
+      const hijriDays = [13, 14, 15, 16, 17]; // الأيام الهجرية المتوقعة
+      if (hijriDays.includes(dayOfMonth)) {
         document.querySelector('.moon').style.display = 'block'; // إظهار القمر
         document.querySelector('.message').style.display = 'block'; // إظهار الرسالة
         startCountdown(); // بدء العد التنازلي
@@ -134,14 +130,14 @@
         const now = new Date();
         const timeLeft = endDate - now;
         const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60));
         const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
         countdown.textContent = `الوقت المتبقي: ${days} يوم، ${hours} ساعة، ${minutes} دقيقة`;
       }, 60000); // تحديث كل دقيقة
     }
 
     // بدء التحقق من التاريخ
-    checkHijriDate();
+    getHijriDate();
   </script>
 
 </body>
