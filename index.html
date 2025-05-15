@@ -55,8 +55,12 @@
     }
 
     .container {
-      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
+      gap: 1.5vmin;
     }
 
     .moon {
@@ -92,7 +96,6 @@
     }
 
     .extra-line {
-      margin-top: 2vmin;
       font-size: 2.8vmin;
       color: white;
       text-align: center;
@@ -101,10 +104,21 @@
       transform: translateY(20px);
       transition: opacity 2s ease, transform 2s ease;
       display: none;
+      max-width: 90vw;
+      line-height: 1.6;
     }
 
     .extra-line.show {
       display: block;
+    }
+
+    .line {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 2s ease, transform 2s ease;
+    }
+
+    .line.visible {
       opacity: 1;
       transform: translateY(0);
     }
@@ -150,10 +164,10 @@
   <div class="container">
     <div class="moon" id="moon"></div>
     <div class="instruction">المس القمر</div>
-    <div class="extra-line">
-      لو سالت الورد وهو مابين يديك ... أقطعك<br>
-      بيقول لك عمري فداااكك.
-لو رجع عمري ابرجع وابتديك .. انتي اجمل شي عشته ياهنأااي 
+    <div class="extra-line" id="extraLine">
+      <div class="line" id="line1">لو سالت الورد وهو مابين يديك ... أقطعك</div>
+      <div class="line" id="line2">بيقول لك عمري فداااكك.</div>
+      <div class="line" id="line3">🤍 لو رجع عمري ابرجع وابتديك .. انتي اجمل شي عشته ياهنأااي</div>
     </div>
   </div>
 
@@ -165,17 +179,20 @@
     const moon = document.getElementById('moon');
     const splash = document.getElementById('splash');
     const instruction = document.querySelector('.instruction');
-    const extraLine = document.querySelector('.extra-line');
+    const extraLine = document.getElementById('extraLine');
+    const lines = [
+      document.getElementById('line1'),
+      document.getElementById('line2'),
+      document.getElementById('line3')
+    ];
 
     let currentSong = 0;
     let isFirstClick = true;
 
-    // شاشة الانتظار 5 ثواني
     setTimeout(() => {
       splash.style.display = 'none';
     }, 5000);
 
-    // توليد النجوم
     function createStars(count = 100) {
       const starsContainer = document.querySelector('.stars');
       for (let i = 0; i < count; i++) {
@@ -192,7 +209,6 @@
     }
     createStars();
 
-    // تشغيل الأغنية وتأثير القمر
     function handleStart() {
       if (!isFirstClick) return;
       isFirstClick = false;
@@ -221,10 +237,16 @@
       playSong(currentSong);
     });
 
-    // عند بداية تشغيل الأغنية
     player.addEventListener('play', () => {
       instruction.style.display = 'none';
       extraLine.classList.add('show');
+
+      // إظهار كل سطر بتأخير 1 ثانية بين كل واحد
+      lines.forEach((line, index) => {
+        setTimeout(() => {
+          line.classList.add('visible');
+        }, index * 1000); // 1000ms = 1s بين كل سطر
+      });
     });
   </script>
 </body>
