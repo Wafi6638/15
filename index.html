@@ -26,7 +26,6 @@
       position: relative;
     }
 
-    /* شاشة الانتظار */
     #splash {
       position: fixed;
       z-index: 9999;
@@ -55,7 +54,6 @@
       to { transform: rotate(360deg); }
     }
 
-    /* القمر */
     .container {
       position: relative;
       text-align: center;
@@ -76,7 +74,6 @@
       z-index: 1;
     }
 
-    /* تأثير لمس القمر */
     @keyframes moonTouch {
       0% { transform: scale(1); }
       50% { transform: scale(1.15); }
@@ -85,13 +82,6 @@
 
     .moon.touch-animate {
       animation: moonTouch 2s ease;
-    }
-
-    .title {
-      margin-top: 15px;
-      font-size: 3.5vmin;
-      color: white;
-      text-shadow: 0 0 10px rgba(255,255,255,0.7);
     }
 
     .instruction {
@@ -108,16 +98,17 @@
       text-align: center;
       text-shadow: 0 0 10px rgba(255,255,255,0.7);
       opacity: 0;
-      transition: opacity 2s ease-in;
+      transform: translateY(20px);
+      transition: opacity 2s ease, transform 2s ease;
       display: none;
     }
 
     .extra-line.show {
       display: block;
       opacity: 1;
+      transform: translateY(0);
     }
 
-    /* نجوم */
     .star {
       position: absolute;
       background: white;
@@ -162,6 +153,7 @@
     <div class="extra-line">
       لو سالت الورد وهو مابين يديك ... أقطعك<br>
       بيقول لك عمري فداااكك.
+لو رجع عمري ابرجع وابتديك .. انتي اجمل شي عشته ياهنأااي 
     </div>
   </div>
 
@@ -200,7 +192,7 @@
     }
     createStars();
 
-    // تشغيل أول أغنية ومنع أي ضغطات بعدها
+    // تشغيل الأغنية وتأثير القمر
     function handleStart() {
       if (!isFirstClick) return;
       isFirstClick = false;
@@ -229,7 +221,7 @@
       playSong(currentSong);
     });
 
-    // إخفاء التعليمات وظهور السطر الجديد عند بداية التشغيل
+    // عند بداية تشغيل الأغنية
     player.addEventListener('play', () => {
       instruction.style.display = 'none';
       extraLine.classList.add('show');
