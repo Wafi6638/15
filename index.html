@@ -1,253 +1,226 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>الهنوف</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title> الهنوف</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    body {
-      font-family: 'Amiri', serif;
-      height: 100vh;
-      overflow: hidden;
-      background: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-      position: relative;
-    }
+body {
+  font-family: 'Amiri', serif;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
 
-    #splash {
-      position: fixed;
-      z-index: 9999;
-      background: #000;
-      color: white;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-size: 24px;
-    }
+/* شاشة الانتظار */
+#splash {
+  position: fixed;
+  z-index: 9999;
+  background: #000;
+  color: white;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
 
-    .loader {
-      border: 4px solid #fff3;
-      border-top: 4px solid #fff;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      margin-bottom: 20px;
-      animation: spin 1s linear infinite;
-    }
+.loader {
+  border: 4px solid #fff3;
+  border-top: 4px solid #fff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 20px;
+  animation: spin 1s linear infinite;
+}
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      gap: 1.5vmin;
-    }
+/* القمر */
+.container {
+  position: relative;
+  text-align: center;
+}
 
-    .moon {
-      width: 40vmin;
-      height: 40vmin;
-      background: radial-gradient(circle at 30% 30%, #fff, #ddd, #999);
-      border-radius: 50%;
-      box-shadow:
-        inset 0 0 20px rgba(255,255,255,0.3),
-        0 0 80px rgba(255, 255, 255, 0.4);
-      animation: pulse 3s ease-in-out infinite;
-      cursor: pointer;
-      transition: transform 0.2s;
-      position: relative;
-      z-index: 1;
-    }
+.moon {
+  width: 40vmin;
+  height: 40vmin;
+  background: radial-gradient(circle at 30% 30%, #fff, #ddd, #999);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 20px rgba(255,255,255,0.3),
+    0 0 80px rgba(255, 255, 255, 0.4);
+  animation: pulse 3s ease-in-out infinite;
+  cursor: pointer;
+  transition: transform 0.2s;
+  position: relative;
+  z-index: 1;
+}
 
-    @keyframes moonTouch {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.15); }
-      100% { transform: scale(1); }
-    }
+/* تأثير لمس القمر */
+@keyframes moonTouch {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
 
-    .moon.touch-animate {
-      animation: moonTouch 2s ease;
-    }
+.moon.touch-animate {
+  animation: moonTouch 2s ease;
+}
 
-    .instruction {
-      font-size: 2.5vmin;
-      color: rgba(255, 255, 255, 0.8);
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-      animation: fadeInOut 2s infinite;
-    }
+.title {
+  margin-top: 15px;
+  font-size: 3.5vmin;
+  color: white;
+  text-shadow: 0 0 10px rgba(255,255,255,0.7);
+}
 
-    .extra-line {
-      font-size: 2.8vmin;
-      color: white;
-      text-align: center;
-      text-shadow: 0 0 10px rgba(255,255,255,0.7);
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 2s ease, transform 2s ease;
-      display: none;
-      max-width: 90vw;
-      line-height: 1.6;
-    }
+.instruction {
+  font-size: 2.5vmin;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  animation: fadeInOut 2s infinite;
+}
 
-    .extra-line.show {
-      display: block;
-    }
+/* نجوم */
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: twinkle 2s infinite alternate, move 30s linear infinite;
+}
 
-    .line {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 2s ease, transform 2s ease;
-    }
+@keyframes twinkle {
+  from { opacity: 0.3; }
+  to { opacity: 1; }
+}
 
-    .line.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+@keyframes move {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(10px, 10px) rotate(360deg); }
+}
 
-    .star {
-      position: absolute;
-      background: white;
-      border-radius: 50%;
-      opacity: 0.8;
-      animation: twinkle 2s infinite alternate, move 30s linear infinite;
-    }
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
 
-    @keyframes twinkle {
-      from { opacity: 0.3; }
-      to { opacity: 1; }
-    }
-
-    @keyframes move {
-      0% { transform: translate(0, 0) rotate(0deg); }
-      100% { transform: translate(10px, 10px) rotate(360deg); }
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-
-    @keyframes fadeInOut {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 1; }
-    }
-  </style>
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+</style>
 </head>
 <body>
 
-  <div id="splash">
-    <div class="loader"></div>
-    <div>جارٍ التحميل…</div>
-  </div>
+<div id="splash">
+  <div class="loader"></div>
+  <div>جارٍ التحميل…</div>
+</div>
 
-  <div class="stars"></div>
+<div class="stars"></div>
 
-  <div class="container">
-    <div class="moon" id="moon"></div>
-    <div class="instruction">المس القمر</div>
-    <div class="extra-line" id="extraLine">
-      <div class="line" id="line1">لو سالت الورد وهو مابين يديك ... أقطعك</div>
-      <div class="line" id="line2">بيقول لك عمري فداااكك.</div>
-      <div class="line" id="line3">🤍 لو رجع عمري ابرجع وابتديك .. انتي اجمل شي عشته ياهنأااي</div>
-    </div>
-  </div>
+<div class="container">
+  <div class="moon" id="moon"></div>
+  <div class="title">لو سالت الورد وهو مابين يديك ... أقطعك</div>
+   <div class="title">بيقول لك عمري فداااكك.</div>
+    <div class="title">لو رجع عمري ابرجع وابتديك ..</div>
+	 <div class="title">انتي اجمل شي عشته ياهنأااي 🤍</div>
+  <div class="instruction">المس القمر</div>
+</div>
 
-  <audio id="player" hidden></audio>
+<audio id="player" hidden></audio>
 
-  <script>
-    const songs = ['songs/song9.mp3'];
-    const player = document.getElementById('player');
-    const moon = document.getElementById('moon');
-    const splash = document.getElementById('splash');
-    const instruction = document.querySelector('.instruction');
-    const extraLine = document.getElementById('extraLine');
-    const lines = [
-      document.getElementById('line1'),
-      document.getElementById('line2'),
-      document.getElementById('line3')
-    ];
+<script>
+const songs = [
+  'songs/song9.mp3'
+];
 
-    let currentSong = 0;
-    let isFirstClick = true;
+const player = document.getElementById('player');
+const moon = document.getElementById('moon');
+const splash = document.getElementById('splash');
+const instruction = document.querySelector('.instruction');
 
-    setTimeout(() => {
-      splash.style.display = 'none';
-    }, 5000);
+let currentSong = 0;
+let isFirstClick = true;
 
-    function createStars(count = 100) {
-      const starsContainer = document.querySelector('.stars');
-      for (let i = 0; i < count; i++) {
-        const star = document.createElement('div');
-        star.classList.add('star');
-        const size = Math.random() * 2 + 1;
-        star.style.width = size + 'px';
-        star.style.height = size + 'px';
-        star.style.top = Math.random() * 100 + 'vh';
-        star.style.left = Math.random() * 100 + 'vw';
-        star.style.animationDuration = (Math.random() * 2 + 1) + 's';
-        starsContainer.appendChild(star);
-      }
-    }
-    createStars();
+// شاشة الانتظار 5 ثواني
+setTimeout(() => {
+  splash.style.display = 'none';
+}, 5000);
 
-    function handleStart() {
-      if (!isFirstClick) return;
-      isFirstClick = false;
+// توليد النجوم
+function createStars(count = 100) {
+  const starsContainer = document.querySelector('.stars');
+  for (let i = 0; i < count; i++) {
+    const star = document.createElement('div');
+    star.classList.add('star');
+    const size = Math.random() * 2 + 1;
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+    star.style.top = Math.random() * 100 + 'vh';
+    star.style.left = Math.random() * 100 + 'vw';
+    star.style.animationDuration = (Math.random() * 2 + 1) + 's';
+    starsContainer.appendChild(star);
+  }
+}
+createStars();
 
-      moon.classList.add('touch-animate');
-      setTimeout(() => {
-        moon.classList.remove('touch-animate');
-      }, 2000);
+// تشغيل أول أغنية ومنع أي ضغطات بعدها
+function handleStart() {
+  if (!isFirstClick) return;
+  isFirstClick = false;
 
-      playSong(currentSong);
-    }
+  // تأثير التفاعل
+  moon.classList.add('touch-animate');
+  setTimeout(() => {
+    moon.classList.remove('touch-animate');
+  }, 2000);
 
-    moon.addEventListener('touchstart', e => {
-      e.preventDefault();
-      handleStart();
-    });
-    moon.addEventListener('click', handleStart);
+  playSong(currentSong);
+}
 
-    function playSong(index) {
-      player.src = songs[index];
-      player.play().catch(console.error);
-    }
+moon.addEventListener('touchstart', e => {
+  e.preventDefault();
+  handleStart();
+});
+moon.addEventListener('click', handleStart);
 
-    player.addEventListener('ended', () => {
-      currentSong = (currentSong + 1) % songs.length;
-      playSong(currentSong);
-    });
+function playSong(index) {
+  player.src = songs[index];
+  player.play().catch(console.error);
+}
 
-    player.addEventListener('play', () => {
-      instruction.style.display = 'none';
-      extraLine.classList.add('show');
+// الانتقال التلقائي للأغنية التالية
+player.addEventListener('ended', () => {
+  currentSong = (currentSong + 1) % songs.length;
+  playSong(currentSong);
+});
 
-      // إظهار كل سطر بتأخير 1 ثانية بين كل واحد
-      lines.forEach((line, index) => {
-        setTimeout(() => {
-          line.classList.add('visible');
-        }, index * 1000); // 1000ms = 1s بين كل سطر
-      });
-    });
-  </script>
+// إخفاء التعليمات عند بداية التشغيل
+player.addEventListener('play', () => {
+  instruction.style.display = 'none';
+});
+</script>
 </body>
 </html>
