@@ -92,6 +92,20 @@ body {
   font-size: 3.5vmin;
   color: white;
   text-shadow: 0 0 10px rgba(255,255,255,0.7);
+  opacity: 0; /* تأكيد أن النص يبدأ بالشفافية */
+  animation: fadeIn 2s forwards; /* تأثير fadeIn */
+}
+
+/* تأثير الكتابة */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px); /* بداية الحركة من أسفل */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); /* الوصول إلى مكانه الطبيعي */
+  }
 }
 
 .instruction {
@@ -129,6 +143,17 @@ body {
   0%, 100% { opacity: 0.5; }
   50% { opacity: 1; }
 }
+
+/* تخصيص النصوص لتناسب الشاشات الصغيرة */
+@media screen and (max-width: 600px) {
+  .title {
+    font-size: 5vmin; /* زيادة حجم النصوص على الشاشات الصغيرة */
+  }
+
+  .instruction {
+    font-size: 4vmin;
+  }
+}
 </style>
 </head>
 <body>
@@ -143,9 +168,9 @@ body {
 <div class="container">
   <div class="moon" id="moon"></div>
   <div class="title">لو سالت الورد وهو مابين يديك ... أقطعك</div>
-   <div class="title">بيقول لك عمري فداااكك.</div>
-    <div class="title">لو رجع عمري ابرجع وابتديك ..</div>
-	 <div class="title">انتي اجمل شي عشته ياهنأااي 🤍</div>
+  <div class="title">بيقول لك عمري فداااكك.</div>
+  <div class="title">لو رجع عمري ابرجع وابتديك ..</div>
+  <div class="title">انتي اجمل شي عشته ياهنأااي 🤍</div>
   <div class="instruction">المس القمر</div>
 </div>
 
